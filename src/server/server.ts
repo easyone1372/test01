@@ -18,6 +18,7 @@ const connection = mysql.createConnection({
   timezone: "Z", // 'Z'는 UTC 시간대를 의미
 });
 
+//연결 오류시 에러메시지 출력
 connection.connect((err: QueryError | null) => {
   if (err) {
     console.error("Error connecting to the database:", err);
@@ -65,10 +66,14 @@ app.get("/classes", (req, res) => {
 app.post("/register", (req, res) => {
   const { studentNum, classNum } = req.body;
 
+  //query문 작성
+  //학생 이름 - students 테이블의 studentName column에 추가
+  //학생 식별 번호, 수업 식별 번호 - classStudents column에 각각 추가
   const queryStudent = "INSERT INTO students (studentName) VALUES (?)";
   const queryClassStudents =
     "INSERT INTO classStudents (classNum, studentNum) VALUES (?, LAST_INSERT_ID())";
 
+  //오류 메시지
   connection.query(queryStudent, [studentNum], (err, result) => {
     if (err) {
       console.error("학생 정보 입력 중 오류 발생:", err);
@@ -89,7 +94,7 @@ app.post("/register", (req, res) => {
 // DATE_FORMAT을 사용해서 날짜형식 지정
 // 출결 데이터 가져오기 (선택된 날짜 필터링)
 app.get("/attendancecheck", (req, res) => {
-  const { date, classNum } = req.query;
+  const { date, classNum } = req.query; //날자와 교실 식별 번호를 요청
   let query = `
       SELECT 
           s.studentName,
@@ -109,6 +114,8 @@ app.get("/attendancecheck", (req, res) => {
           class cl ON cs.classNum = cl.classNum
           
   `;
+
+  //사용자가 날짜와 수업을 선택하면 그 값을 받아서 db에 요청, join을 통해 둘 다 해당하는 데이터를 받아옴.
   const conditions = [];
   if (date) {
     conditions.push(`jc.date = '${date}'`);
@@ -124,6 +131,7 @@ app.get("/attendancecheck", (req, res) => {
   // 로그에 쿼리를 출력하여 확인합니다.
   //console.log("Generated SQL Query: ", query);
 
+  //오류 발생시 출력 메시지
   connection.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching attendance data:", err);
@@ -137,8 +145,11 @@ app.get("/attendancecheck", (req, res) => {
 
 // 날짜 목록 가져오기
 app.get("/dates", (req, res) => {
+  //쿼리문
   const query =
     "SELECT dateId, DATE_FORMAT(date, '%Y-%m-%d') as date FROM julyCalendar";
+
+  //오류 발생시 출력 메시지
   connection.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching dates:", err);

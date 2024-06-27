@@ -1,5 +1,6 @@
 import React, { CSSProperties } from "react";
 
+//학생 등록 입력칸 props
 type InputProps = {
   type: string;
   placeholder: string;

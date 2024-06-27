@@ -1,38 +1,43 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 
-export interface Attendance {
+//출석 데이터 타입 설정
+export type Attendance = {
   studentName: string;
   date: string;
   status: string;
   classNum: string;
   className: string;
-}
+};
 
-interface AttendanceTableProps {
+//출석 테이블 props 설정
+type AttendanceTableProps = {
   attendanceData: Attendance[];
-}
+};
 
-const AttendanceTable: React.FC<AttendanceTableProps> = ({
-  attendanceData,
-}) => {
-  const tableStyle: React.CSSProperties = {
+//출석 테이블 출력 함수
+const AttendanceTable = ({ attendanceData }: AttendanceTableProps) => {
+  //스타일 설정
+  const tableStyle: CSSProperties = {
     maxWidth: "1200px",
     width: "100%",
     margin: "0 auto",
   };
 
-  const attendTableStyle: React.CSSProperties = {
+  const attendTableStyle: CSSProperties = {
     maxWidth: "1200px",
     width: "100%",
     margin: "0 auto",
     border: "1px solid black",
   };
 
-  const attendContentStyle: React.CSSProperties = {
+  const attendContentStyle: CSSProperties = {
     border: "1px solid black",
     textAlign: "center",
     padding: "8px",
   };
+
+  //상단 테이블 출력
+  //출석 데이터를 받아와서 화면에 출력
 
   return (
     <table style={tableStyle}>
