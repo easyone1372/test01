@@ -37,7 +37,7 @@ const MainPage = () => {
   };
 
   const navigateToAttendance = () => {
-    navigate("/attendance");
+    navigate("/attendances");
   };
 
   const navigateToAttendanceCheck = () => {

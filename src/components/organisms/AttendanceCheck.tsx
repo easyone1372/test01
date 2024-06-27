@@ -18,7 +18,7 @@ export type ClassOption = {
 };
 
 //출결 테이블 화면
-const AttendanceCheck = () => {
+const AttendanceCheck: React.FC = () => {
   //useState 선언
   const [dates, setDates] = useState<DateOption[]>([]); //날짜 옵션 상태
   const [selectedDate, setSelectedDate] = useState<string | null>(null); //선택한 날짜 옵션 상태
@@ -63,6 +63,10 @@ const AttendanceCheck = () => {
     }
   }, [selectedDate, selectedClass]);
 
+  //선택한 날짜 리스트 받아오기
+  const dateList = (selectedValue: string) => setSelectedDate(selectedValue);
+  const classList = (selectedValue: string) =>
+    setSelectedClass(parseInt(selectedValue, 10));
   //스타일 선언
   const divStyle: CSSProperties = {
     maxWidth: "1200px",
@@ -85,7 +89,7 @@ const AttendanceCheck = () => {
           value: date.date,
           text: date.date,
         }))}
-        OptionChange={(selectedValue: string) => setSelectedDate(selectedValue)}
+        OptionChange={dateList}
         defaultOption="날짜 선택"
       />
 
@@ -96,9 +100,7 @@ const AttendanceCheck = () => {
           value: cls.classNum.toString(),
           text: cls.className,
         }))}
-        OptionChange={(selectedValue: string) =>
-          setSelectedClass(parseInt(selectedValue, 10))
-        }
+        OptionChange={classList}
         defaultOption="수업 선택"
       />
 

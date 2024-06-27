@@ -161,6 +161,71 @@ app.get("/dates", (req, res) => {
   });
 });
 
+// 특정 시간대에 대한 학생 정보 가져오기
+app.get("/students/:classNum", (req, res) => {
+  const classNum = req.params.classNum;
+
+  const query = `
+    SELECT s.studentNum, s.studentName, c.className
+    FROM students s
+    JOIN classStudents cs ON s.studentNum = cs.studentNum
+    JOIN class c ON cs.classNum = c.classNum
+    WHERE cs.classNum = ?;`;
+
+  connection.query(query, [classNum], (err, results) => {
+    if (err) {
+      console.error("Error fetching student data:", err);
+      res.status(500).send("Error fetching student data.");
+      return;
+    }
+    res.json(results);
+  });
+});
+
+// 출석 정보 저장
+app.post("/saveAttendance", (req, res) => {
+  const { students, dateId, classNum } = req.body; // classNum을 req.body에서 받도록 수정
+
+  const query = `
+    INSERT INTO attendance (classNum, studentNum, dateId, status)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  connection.beginTransaction((err) => {
+    if (err) {
+      console.error("트랜잭션 오류:", err);
+      return res.status(500).send("트랜잭션 오류: " + err.message);
+    }
+
+    students.forEach((student: any) => {
+      connection.query(
+        query,
+        [classNum, student.studentID, dateId, student.status], // classNum을 직접 사용
+        (err) => {
+          if (err) {
+            return connection.rollback(() => {
+              console.error("출석 정보 저장 중 오류 발생:", err);
+              res
+                .status(500)
+                .send("출석 정보 저장 중 오류 발생: " + err.message);
+            });
+          }
+        }
+      );
+    });
+
+    connection.commit((err) => {
+      if (err) {
+        return connection.rollback(() => {
+          console.error("커밋 오류:", err);
+          res.status(500).send("커밋 오류: " + err.message);
+        });
+      }
+      res.send("출석 정보 저장 성공");
+    });
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -5,6 +5,7 @@ import MainPage from "./components/organisms/MainPage";
 import Register from "./components/organisms/Register";
 
 import AttendanceCheck from "./components/organisms/AttendanceCheck";
+import Attend from "./components/organisms/Attend";
 
 const App = () => {
   const style: CSSProperties = {
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/mainpage" element={<MainPage />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/attendances" element={<Attend />} />
 
           <Route path="/attendancecheck" element={<AttendanceCheck />} />
         </Routes>
